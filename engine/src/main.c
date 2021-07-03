@@ -43,14 +43,14 @@ int main() {
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
-    glClearColor(0.2f, 0.1f, 0.3f, 1.f);
+    glClearColor(0.443f, 0.482f, 0.498f, 1.f);
 
     gluOrtho2D(0, SAMPLE_LEVEL_WIDTH, SAMPLE_LEVEL_HEIGHT, 0);
 
     MultiframeAtlasEntry tilesetAtlasEntry = {
             .x = 0,
             .y = 0,
-//            .firstFrame = 0,
+            .firstFrame = 0,
             .frameWidth = 32,
             .frameHeight = 32,
             .framesPerRow = 8,
@@ -64,6 +64,9 @@ int main() {
 
     TilemapRenderer tilemapRenderer;
     TilemapRenderer_init(&tilemapRenderer, "data/tileset.png", &tilesetAtlasEntry);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     do {
         glClear(GL_COLOR_BUFFER_BIT);
