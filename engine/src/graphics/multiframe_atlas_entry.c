@@ -15,8 +15,8 @@ Vec4 *MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, uint16_t
     Vec4 *currentTexCoords = texCoords;
 
     for (uint16_t nFrame = this.firstFrame; nFrame < this.frameCount; nFrame++) {
-        uint32_t x = (nFrame % this.framesPerRow) * this.frameWidth;
-        uint32_t y = (nFrame / this.framesPerRow) * this.frameHeight;
+        uint16_t x = (nFrame % this.framesPerRow) * this.frameWidth;
+        uint16_t y = (nFrame / this.framesPerRow) * this.frameHeight;
 
         currentTexCoords->x = (float) x * coordFactor.x;
         currentTexCoords->y = (float) y * coordFactor.y;

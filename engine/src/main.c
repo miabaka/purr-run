@@ -1,39 +1,12 @@
 #define GLFW_INCLUDE_NONE
 
-#include <stdint.h>
 #include <stddef.h>
-#include <malloc.h>
-#include <stdio.h>
-#include <string.h>
 #include <GL/gl.h>
-#include <GL/glext.h>
 #include <GL/glu.h>
 #include <GLFW/glfw3.h>
-#include "graphics/tilemap_renderer.h"
-#include "tile.h"
 #include "tilemap.h"
-
-#define SAMPLE_LEVEL_WIDTH 20
-#define SAMPLE_LEVEL_HEIGHT 15
-#define SAMPLE_LEVEL_SIZE (SAMPLE_LEVEL_WIDTH * SAMPLE_LEVEL_HEIGHT)
-
-const Tile SAMPLE_LEVEL_TILES[SAMPLE_LEVEL_SIZE] = {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 5, 5, 5, 0, 2, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 1, 4, 2, 0, 0, 0, 0,
-        1, 0, 0, 0, 0, 0, 0, 5, 5, 4, 0, 0, 0, 0, 4, 2, 0, 0, 0, 0,
-        0, 1, 4, 1, 3, 3, 3, 0, 0, 4, 4, 0, 0, 0, 4, 0, 0, 2, 0, 0,
-        0, 0, 4, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 4, 2, 1, 2, 0, 0,
-        0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 0, 0, 2, 0, 0,
-        0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 0, 0, 2, 2, 0, 0, 0,
-        0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 0, 0, 0, 0,
-        1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 2, 0, 0, 0, 0,
-        0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 2, 0, 0, 0, 0,
-        0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 4, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 0
-};
+#include "graphics/tilemap_renderer.h"
+#include "sample_map.h"
 
 int main() {
     glfwInit();
@@ -45,7 +18,7 @@ int main() {
 
     glClearColor(0.443f, 0.482f, 0.498f, 1.f);
 
-    gluOrtho2D(0, SAMPLE_LEVEL_WIDTH, SAMPLE_LEVEL_HEIGHT, 0);
+    gluOrtho2D(0, SAMPLE_MAP_WIDTH, SAMPLE_MAP_HEIGHT, 0);
 
     MultiframeAtlasEntry tilesetAtlasEntry = {
             .x = 0,
@@ -60,7 +33,7 @@ int main() {
     Tilemap map;
     Tilemap_init(&map);
 
-    Tilemap_assignTiles(&map, SAMPLE_LEVEL_WIDTH, SAMPLE_LEVEL_HEIGHT, SAMPLE_LEVEL_TILES);
+    Tilemap_assignTiles(&map, SAMPLE_MAP_WIDTH, SAMPLE_MAP_HEIGHT, SAMPLE_MAP_TILES);
 
     TilemapRenderer tilemapRenderer;
     TilemapRenderer_init(&tilemapRenderer, "data/tileset.png", &tilesetAtlasEntry);

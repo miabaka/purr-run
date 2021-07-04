@@ -7,11 +7,11 @@
 typedef struct {
     uint16_t x;
     uint16_t y;
-    uint16_t firstFrame;
-    uint16_t frameWidth;
-    uint16_t frameHeight;
-    uint16_t framesPerRow;
     uint16_t frameCount;
+    uint8_t firstFrame;
+    uint8_t frameWidth;
+    uint8_t frameHeight;
+    uint8_t framesPerRow;
 } MultiframeAtlasEntry;
 
 Vec4 *MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, uint16_t *outCount, IVec2 atlasSize);
