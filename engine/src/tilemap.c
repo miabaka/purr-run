@@ -40,7 +40,7 @@ Tile Tilemap_getTile(Tilemap *this, IVec2 position) {
     return this->tiles[position.x + position.y * this->width];
 }
 
-Tile Tilemap_getTile2(Tilemap *this, IVec2 position, int ox, int oy) {
+Tile Tilemap_getTileWithOffset(Tilemap *this, IVec2 position, int ox, int oy) {
     position.x += ox;
     position.y += oy;
 

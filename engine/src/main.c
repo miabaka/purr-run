@@ -91,8 +91,8 @@ static inline void snapPlayerToVerticalGrid(Entity *player, float dt) {
 // TODO: replace this ugly ifs with something pretty
 void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilemap *map) {
     Tile currentTile = Tilemap_getTile(map, player->tilePosition);
-    Tile floorTile = Tilemap_getTile2(map, player->tilePosition, 0, 1);
-    Tile upperTile = Tilemap_getTile2(map, player->tilePosition, 0, -1);
+    Tile floorTile = Tilemap_getTileWithOffset(map, player->tilePosition, 0, 1);
+    Tile upperTile = Tilemap_getTileWithOffset(map, player->tilePosition, 0, -1);
 
     // falling
 

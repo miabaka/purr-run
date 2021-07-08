@@ -21,6 +21,6 @@ void Tilemap_assignTiles(Tilemap *this, uint8_t width, uint8_t height, const Til
 
 Tile Tilemap_getTile(Tilemap *this, IVec2 position);
 
-Tile Tilemap_getTile2(Tilemap *this, IVec2 position, int ox, int oy);
+Tile Tilemap_getTileWithOffset(Tilemap *this, IVec2 position, int ox, int oy);
 
 void Tilemap_setTile(Tilemap *this, IVec2 position, Tile tile);
