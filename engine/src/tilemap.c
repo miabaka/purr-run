@@ -32,3 +32,24 @@ void Tilemap_assignTiles(Tilemap *this, uint8_t width, uint8_t height, const Til
 
     memcpy(this->tiles, tiles, sizeInBytes);
 }
+
+Tile Tilemap_getTile(Tilemap *this, IVec2 position) {
+    if (position.x < 0 || position.y < 0 || position.x >= this->width || position.y >= this->height)
+        return Tile_Air;
+
+    return this->tiles[position.x + position.y * this->width];
+}
+
+Tile Tilemap_getTile2(Tilemap *this, IVec2 position, int ox, int oy) {
+    position.x += ox;
+    position.y += oy;
+
+    return Tilemap_getTile(this, position);
+}
+
+void Tilemap_setTile(Tilemap *this, IVec2 position, Tile tile) {
+    if (position.x < 0 || position.y < 0 || position.x >= this->width || position.y >= this->height)
+        return;
+
+    this->tiles[position.x + position.y * this->width] = tile;
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include "math/ivec2.h"
 #include "tile.h"
 
 typedef struct {
@@ -17,3 +18,9 @@ void Tilemap_destroy(Tilemap *this);
 void Tilemap_freeTiles(Tilemap *this);
 
 void Tilemap_assignTiles(Tilemap *this, uint8_t width, uint8_t height, const Tile *tiles);
+
+Tile Tilemap_getTile(Tilemap *this, IVec2 position);
+
+Tile Tilemap_getTile2(Tilemap *this, IVec2 position, int ox, int oy);
+
+void Tilemap_setTile(Tilemap *this, IVec2 position, Tile tile);
