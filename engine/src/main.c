@@ -64,6 +64,7 @@ typedef struct {
 } PlayerInputState;
 
 #define PLAYER_MOVEMENT_SPEED 4.f
+#define PLAYER_SNAPPING_RATE 60.f
 
 static inline bool tileIsSolid(Tile tile) {
     return tile == Tile_Ground || tile == Tile_Concrete || tile == Tile_Ice;
@@ -81,6 +82,22 @@ static inline float minf(float a, float b) {
     return (a < b) ? a : b;
 }
 
+static inline float lerpf(float v0, float v1, float t) {
+    return (1.f - t) * v0 + t * v1;
+}
+
+static void snapPlayerAxisToGrid(float *pos, int tilePos, float dt) {
+    *pos = lerpf((float) tilePos, *pos, exp2f(-PLAYER_SNAPPING_RATE * dt));
+}
+
+static inline void snapPlayerToHorizontalGrid(Entity *player, float dt) {
+    snapPlayerAxisToGrid(&player->position.x, player->tilePosition.x, dt);
+}
+
+static inline void snapPlayerToVerticalGrid(Entity *player, float dt) {
+    snapPlayerAxisToGrid(&player->position.y, player->tilePosition.y, dt);
+}
+
 // TODO: queue for direction keys
 // TODO: replace this ugly ifs with something pretty
 void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilemap *map) {
@@ -95,7 +112,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
         player->state = EntityState_Falling;
 
     if (player->state == EntityState_Falling || player->state == EntityState_FallingByRope) {
-        player->position.x = (float) player->tilePosition.x;
+        snapPlayerToHorizontalGrid(player, dt);
         player->position.y += dt * PLAYER_MOVEMENT_SPEED;
 
         if (player->state == EntityState_FallingByRope && currentTile == Tile_Rope &&
@@ -122,7 +139,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
                 player->position.y = maxf(player->position.y, (float) player->tilePosition.y);
 
             if (player->position.y != (float) player->tilePosition.y) {
-                player->position.x = (float) player->tilePosition.x;
+                snapPlayerToHorizontalGrid(player, dt);
                 Entity_updateTilePosition(player);
                 return;
             }
@@ -130,7 +147,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
     } else if (inputState->down) {
         player->position.y += dt * PLAYER_MOVEMENT_SPEED;
 
-        if (currentTile == Tile_Rope) {
+        if (currentTile == Tile_Rope && !tileIsFloor(floorTile)) {
             player->state = EntityState_FallingByRope;
             player->ropeFallRow = player->tilePosition.y;
             return;
@@ -140,7 +157,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
             player->position.y = minf(player->position.y, (float) player->tilePosition.y);
 
         if (player->position.y != (float) player->tilePosition.y) {
-            player->position.x = (float) player->tilePosition.x;
+            snapPlayerToHorizontalGrid(player, dt);
             Entity_updateTilePosition(player);
             return;
         }
@@ -173,7 +190,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
         }
 
         if (player->position.x != (float) player->tilePosition.x)
-            player->position.y = (float) player->tilePosition.y;
+            snapPlayerToVerticalGrid(player, dt);
     }
 
     Entity_updateTilePosition(player);
