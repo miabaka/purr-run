@@ -11,6 +11,7 @@
 #include "graphics/tilemap_renderer.h"
 #include "sample_map.h"
 #include "math/vec2.h"
+#include "math/util.h"
 
 typedef enum {
     EntityState_None,
@@ -72,18 +73,6 @@ static inline bool tileIsSolid(Tile tile) {
 
 static inline bool tileIsFloor(Tile tile) {
     return tileIsSolid(tile) || tile == Tile_Ladder;
-}
-
-static inline float maxf(float a, float b) {
-    return (a > b) ? a : b;
-}
-
-static inline float minf(float a, float b) {
-    return (a < b) ? a : b;
-}
-
-static inline float lerpf(float v0, float v1, float t) {
-    return (1.f - t) * v0 + t * v1;
 }
 
 static void snapPlayerAxisToGrid(float *pos, int tilePos, float dt) {
