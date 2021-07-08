@@ -92,6 +92,7 @@ static inline void snapPlayerToVerticalGrid(Entity *player, float dt) {
 void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilemap *map) {
     Tile currentTile = Tilemap_getTile(map, player->tilePosition);
     Tile floorTile = Tilemap_getTile2(map, player->tilePosition, 0, 1);
+    Tile upperTile = Tilemap_getTile2(map, player->tilePosition, 0, -1);
 
     // falling
 
@@ -124,7 +125,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
         if (currentTile == Tile_Ladder || floorTile == Tile_Ladder) {
             player->position.y -= dt * PLAYER_MOVEMENT_SPEED;
 
-            if (!currentTile)
+            if (!currentTile || tileIsSolid(upperTile))
                 player->position.y = maxf(player->position.y, (float) player->tilePosition.y);
 
             if (player->position.y != (float) player->tilePosition.y) {
