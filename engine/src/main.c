@@ -121,12 +121,11 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
             if (!currentTile)
                 player->position.y = maxf(player->position.y, (float) player->tilePosition.y);
 
-            if (player->position.y != (float) player->tilePosition.y)
+            if (player->position.y != (float) player->tilePosition.y) {
                 player->position.x = (float) player->tilePosition.x;
-
-            Entity_updateTilePosition(player);
-
-            return;
+                Entity_updateTilePosition(player);
+                return;
+            }
         }
     } else if (inputState->down) {
         player->position.y += dt * PLAYER_MOVEMENT_SPEED;
@@ -140,12 +139,11 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
         if (tileIsSolid(floorTile))
             player->position.y = minf(player->position.y, (float) player->tilePosition.y);
 
-        if (player->position.y != (float) player->tilePosition.y)
+        if (player->position.y != (float) player->tilePosition.y) {
             player->position.x = (float) player->tilePosition.x;
-
-        Entity_updateTilePosition(player);
-
-        return;
+            Entity_updateTilePosition(player);
+            return;
+        }
     }
 
     // horizontal movement
