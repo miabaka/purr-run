@@ -5,7 +5,7 @@
 #include "graphics/tile_def.h"
 #include "graphics/tilemap_renderer_config.h"
 
-const MultiframeAtlasEntry TILESET_ATLAS_ENTRIES[] = {
+static const MultiframeAtlasEntry TILESET_ATLAS_ENTRIES[] = {
         {
                 .x = 0,
                 .y = 0,
@@ -26,7 +26,7 @@ const MultiframeAtlasEntry TILESET_ATLAS_ENTRIES[] = {
         }
 };
 
-const TileDef TILESET_TILE_DEFS[] = {
+static const TileDef TILESET_TILE_DEFS[] = {
         {
                 .tile = TileType_Ground,
                 .atlasEntry = 0,
@@ -54,7 +54,7 @@ const TileDef TILESET_TILE_DEFS[] = {
         }
 };
 
-const TilemapRendererConfig TILESET_RENDERER_CONFIG = {
+static const TilemapRendererConfig TILESET_RENDERER_CONFIG = {
         .atlasEntries = TILESET_ATLAS_ENTRIES,
         .atlasEntryCount = sizeof(TILESET_ATLAS_ENTRIES) / sizeof(MultiframeAtlasEntry),
         .tileDefs = TILESET_TILE_DEFS,

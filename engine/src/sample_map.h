@@ -4,7 +4,7 @@
 #define SAMPLE_MAP_HEIGHT 15
 #define SAMPLE_MAP_SIZE (SAMPLE_MAP_WIDTH * SAMPLE_MAP_HEIGHT)
 
-const TileType SAMPLE_MAP_TILES[SAMPLE_MAP_SIZE] = {
+static const TileType SAMPLE_MAP_TILES[SAMPLE_MAP_SIZE] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 5, 5, 5, 0, 2, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 1, 1, 4, 2, 0, 0, 0, 0,
         1, 0, 0, 0, 0, 0, 0, 5, 5, 4, 0, 0, 0, 0, 4, 2, 0, 0, 0, 0,

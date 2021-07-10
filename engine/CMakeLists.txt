@@ -12,7 +12,9 @@ add_executable(engine
         src/math/ivec2.c
         src/math/vec2.c
         src/stb/stb_image.c
+        src/game.c
         src/main.c
+        src/player.c
         src/tilemap.c)
 
 target_link_libraries(engine glfw OpenGL::GL OpenGL::GLU)
