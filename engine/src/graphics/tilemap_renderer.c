@@ -3,28 +3,6 @@
 #include <GL/glext.h>
 #include "../stb/stb_image.h"
 
-static const uint8_t DOCK_MAPPING[] = {
-        0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 4, 4,
-        0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2, 2, 4, 4,
-        5, 5, 6, 6, 5, 5, 6, 6, 7, 7, 8, 8, 7, 7, 9, 9,
-        5, 5, 6, 6, 5, 5, 6, 6, 10, 10, 11, 11, 10, 10,
-        12, 12, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-        2, 4, 4, 0, 0, 1, 1, 0, 0, 1, 1, 2, 2, 3, 3, 2,
-        2, 4, 4, 5, 5, 6, 6, 5, 5, 6, 6, 7, 7, 8, 8, 7,
-        7, 9, 9, 5, 5, 6, 6, 5, 5, 6, 6, 10, 10, 11, 11,
-        10, 10, 12, 12, 13, 13, 14, 15, 13, 13, 14, 15,
-        16, 16, 17, 18, 16, 16, 19, 20, 13, 13, 14, 15,
-        13, 13, 14, 15, 16, 16, 17, 18, 16, 16, 19, 20,
-        21, 21, 22, 23, 21, 21, 22, 23, 24, 24, 25, 26,
-        24, 24, 27, 28, 21, 21, 22, 23, 21, 21, 22, 23,
-        29, 29, 30, 31, 29, 29, 32, 33, 13, 13, 14, 15,
-        13, 13, 14, 15, 16, 16, 17, 18, 16, 16, 19, 20,
-        13, 13, 14, 15, 13, 13, 14, 15, 16, 16, 17, 18,
-        16, 16, 19, 20, 34, 34, 35, 36, 34, 34, 35, 36,
-        37, 37, 38, 39, 37, 37, 40, 41, 34, 34, 35, 36,
-        34, 34, 35, 36, 42, 42, 43, 44, 42, 42, 45, 46
-};
-
 static GLuint loadTexture(const char *path, IVec2 *outSize) {
     int width, height, nChannels;
     unsigned char *pixelData = stbi_load(path, &width, &height, &nChannels, STBI_rgb_alpha);
@@ -114,25 +92,6 @@ static inline void drawTile(IVec2 position, Vec4 texCoords) {
     glVertex2i(position.x + 1, position.y);
 }
 
-static inline bool isTileDockable(Tile tile) {
-    return tile == Tile_Ground || tile == Tile_Concrete || tile == Tile_Ice;
-}
-
-static inline uint8_t getDockingFrame(const Tilemap *map, IVec2 position) {
-    uint8_t sides = 0;
-
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, -1, -1));
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, 0, -1)) << 1;
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, 1, -1)) << 2;
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, 1, 0)) << 3;
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, 1, 1)) << 4;
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, 0, 1)) << 5;
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, -1, 1)) << 6;
-    sides |= isTileDockable(Tilemap_getTileWithOffset(map, position, -1, 0)) << 7;
-
-    return DOCK_MAPPING[sides];
-}
-
 // TODO: replace with the blazing fast shader-based renderer
 // TODO: take frame numbers from tile-to-frame lut
 void TilemapRenderer_render(TilemapRenderer *this, const Tilemap *map) {
@@ -147,20 +106,17 @@ void TilemapRenderer_render(TilemapRenderer *this, const Tilemap *map) {
     for (uint16_t nTile = 0; nTile < map->tileCount; nTile++) {
         Tile tile = tiles[nTile];
 
-        if (tile == Tile_Air)
+        if (tile.type == Tile_Air)
             continue;
 
-        uint16_t frame = this->tileFirstFrames[tile];
+        uint16_t frame = this->tileFirstFrames[tile.type];
 
         IVec2 pos = {
                 .x = nTile % mapWidth,
                 .y = nTile / mapWidth
         };
 
-        if (isTileDockable(tile))
-            frame += getDockingFrame(map, pos);
-
-        drawTile(pos, this->texCoords[frame]);
+        drawTile(pos, this->texCoords[frame + tile.variant]);
     }
 
     glEnd(); // GL_QUADS

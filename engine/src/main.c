@@ -69,11 +69,11 @@ typedef struct {
 #define PLAYER_FALLING_SPEED 7.f
 #define PLAYER_SNAPPING_RATE 60.f
 
-static inline bool tileIsSolid(Tile tile) {
+static inline bool tileIsSolid(TileType tile) {
     return tile == Tile_Ground || tile == Tile_Concrete || tile == Tile_Ice;
 }
 
-static inline bool tileIsFloor(Tile tile) {
+static inline bool tileIsFloor(TileType tile) {
     return tileIsSolid(tile) || tile == Tile_Ladder;
 }
 
@@ -92,9 +92,9 @@ static inline void snapPlayerToVerticalGrid(Entity *player, float dt) {
 // TODO: queue for direction keys
 // TODO: replace this ugly ifs with something pretty
 void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilemap *map) {
-    Tile currentTile = Tilemap_getTile(map, player->tilePosition);
-    Tile floorTile = Tilemap_getTileWithOffset(map, player->tilePosition, 0, 1);
-    Tile upperTile = Tilemap_getTileWithOffset(map, player->tilePosition, 0, -1);
+    TileType currentTile = Tilemap_getTile(map, player->tilePosition).type;
+    TileType floorTile = Tilemap_getTileWithOffset(map, player->tilePosition, 0, 1).type;
+    TileType upperTile = Tilemap_getTileWithOffset(map, player->tilePosition, 0, -1).type;
 
     // falling
 
@@ -168,7 +168,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
         if (inputState->right)
             newTilePos.x += 1;
 
-        Tile tile = Tilemap_getTile(map, newTilePos);
+        TileType tile = Tilemap_getTile(map, newTilePos).type;
 
         if (tileIsSolid(tile)) {
             float nx = player->position.x + dx;
