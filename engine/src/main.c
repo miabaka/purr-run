@@ -12,6 +12,7 @@
 #include "sample_map.h"
 #include "math/vec2.h"
 #include "math/util.h"
+#include "tileset.h"
 
 typedef enum {
     EntityState_None,
@@ -38,12 +39,12 @@ void drawPlayer(Entity *player) {
 
     glBegin(GL_QUADS);
 
-    glColor3f(1.f, 0.f, 0.f);
-
-    glVertex2i(tpos.x, tpos.y);
-    glVertex2i(tpos.x, tpos.y + 1);
-    glVertex2i(tpos.x + 1, tpos.y + 1);
-    glVertex2i(tpos.x + 1, tpos.y);
+//    glColor3f(1.f, 0.f, 0.f);
+//
+//    glVertex2i(tpos.x, tpos.y);
+//    glVertex2i(tpos.x, tpos.y + 1);
+//    glVertex2i(tpos.x + 1, tpos.y + 1);
+//    glVertex2i(tpos.x + 1, tpos.y);
 
     glColor3f(1.f, 1.f, 1.f);
 
@@ -65,6 +66,7 @@ typedef struct {
 } PlayerInputState;
 
 #define PLAYER_MOVEMENT_SPEED 4.f
+#define PLAYER_FALLING_SPEED 7.f
 #define PLAYER_SNAPPING_RATE 60.f
 
 static inline bool tileIsSolid(Tile tile) {
@@ -103,7 +105,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
 
     if (player->state == EntityState_Falling || player->state == EntityState_FallingByRope) {
         snapPlayerToHorizontalGrid(player, dt);
-        player->position.y += dt * PLAYER_MOVEMENT_SPEED;
+        player->position.y += dt * PLAYER_FALLING_SPEED;
 
         if (player->state == EntityState_FallingByRope && currentTile == Tile_Rope &&
             player->ropeFallRow == player->tilePosition.y)
@@ -236,18 +238,8 @@ int main() {
     glfwSetWindowUserPointer(window, &map);
     glfwSetKeyCallback(window, handleKeyEvent);
 
-    MultiframeAtlasEntry tilesetAtlasEntry = {
-            .x = 0,
-            .y = 0,
-            .firstFrame = 0,
-            .frameWidth = 32,
-            .frameHeight = 32,
-            .framesPerRow = 8,
-            .frameCount = 8
-    };
-
     TilemapRenderer tilemapRenderer;
-    TilemapRenderer_init(&tilemapRenderer, "data/tileset.png", &tilesetAtlasEntry);
+    TilemapRenderer_init(&tilemapRenderer, "data/atlas.png", &TILESET_RENDERER_CONFIG);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

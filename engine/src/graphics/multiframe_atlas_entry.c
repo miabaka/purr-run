@@ -3,20 +3,21 @@
 #include <malloc.h>
 #include "../math/vec2.h"
 
-Vec4 *MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, uint16_t *outCount, IVec2 atlasSize) {
-    uint16_t frameCount = this.frameCount - this.firstFrame;
+uint16_t MultiframeAtlasEntry_getFrameCount(const MultiframeAtlasEntry *this) {
+    return this->frameCount - this->firstFrame;
+}
 
+uint16_t MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, Vec4 *outTexCoords, IVec2 atlasSize) {
     Vec2 coordFactor = {
             .x = 1.f / (float) atlasSize.x,
             .y = 1.f / (float) atlasSize.y
     };
 
-    Vec4 *texCoords = malloc(sizeof(Vec4) * frameCount);
-    Vec4 *currentTexCoords = texCoords;
+    Vec4 *currentTexCoords = outTexCoords;
 
     for (uint16_t nFrame = this.firstFrame; nFrame < this.frameCount; nFrame++) {
-        uint16_t x = (nFrame % this.framesPerRow) * this.frameWidth;
-        uint16_t y = (nFrame / this.framesPerRow) * this.frameHeight;
+        uint16_t x = this.x + (nFrame % this.framesPerRow) * this.frameWidth;
+        uint16_t y = this.y + (nFrame / this.framesPerRow) * this.frameHeight;
 
         currentTexCoords->x = (float) x * coordFactor.x;
         currentTexCoords->y = (float) y * coordFactor.y;
@@ -26,7 +27,5 @@ Vec4 *MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, uint16_t
         currentTexCoords++;
     }
 
-    *outCount = frameCount;
-
-    return texCoords;
+    return MultiframeAtlasEntry_getFrameCount(&this);
 }

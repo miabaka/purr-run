@@ -14,4 +14,6 @@ typedef struct {
     uint8_t framesPerRow;
 } MultiframeAtlasEntry;
 
-Vec4 *MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, uint16_t *outCount, IVec2 atlasSize);
+uint16_t MultiframeAtlasEntry_getFrameCount(const MultiframeAtlasEntry *this);
+
+uint16_t MultiframeAtlasEntry_generateTexCoords(MultiframeAtlasEntry this, Vec4 *outTexCoords, IVec2 atlasSize);
