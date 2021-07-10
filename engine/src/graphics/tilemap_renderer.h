@@ -8,7 +8,7 @@
 #include "tilemap_renderer_config.h"
 
 typedef struct {
-    uint16_t tileFirstFrames[16];
+    uint16_t tileFirstFrames[TileType_count];
     Vec4 *texCoords;
     GLuint texAtlas;
 } TilemapRenderer;

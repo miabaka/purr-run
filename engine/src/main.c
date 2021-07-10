@@ -70,11 +70,11 @@ typedef struct {
 #define PLAYER_SNAPPING_RATE 60.f
 
 static inline bool tileIsSolid(TileType tile) {
-    return tile == Tile_Ground || tile == Tile_Concrete || tile == Tile_Ice;
+    return tile == TileType_Ground || tile == TileType_Concrete || tile == TileType_Ice;
 }
 
 static inline bool tileIsFloor(TileType tile) {
-    return tileIsSolid(tile) || tile == Tile_Ladder;
+    return tileIsSolid(tile) || tile == TileType_Ladder;
 }
 
 static void snapPlayerAxisToGrid(float *pos, int tilePos, float dt) {
@@ -98,7 +98,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
 
     // falling
 
-    bool onFloor = tileIsFloor(floorTile) || currentTile == Tile_Rope || currentTile == Tile_Ladder;
+    bool onFloor = tileIsFloor(floorTile) || currentTile == TileType_Rope || currentTile == TileType_Ladder;
 
     if (!(onFloor || player->state == EntityState_FallingByRope))
         player->state = EntityState_Falling;
@@ -107,7 +107,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
         snapPlayerToHorizontalGrid(player, dt);
         player->position.y += dt * PLAYER_FALLING_SPEED;
 
-        if (player->state == EntityState_FallingByRope && currentTile == Tile_Rope &&
+        if (player->state == EntityState_FallingByRope && currentTile == TileType_Rope &&
             player->ropeFallRow == player->tilePosition.y)
             onFloor = false;
 
@@ -124,7 +124,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
     // vertical movement
 
     if (inputState->up) {
-        if (currentTile == Tile_Ladder || floorTile == Tile_Ladder) {
+        if (currentTile == TileType_Ladder || floorTile == TileType_Ladder) {
             player->position.y -= dt * PLAYER_MOVEMENT_SPEED;
 
             if (!currentTile || tileIsSolid(upperTile))
@@ -139,7 +139,7 @@ void updatePlayer(Entity *player, float dt, PlayerInputState *inputState, Tilema
     } else if (inputState->down) {
         player->position.y += dt * PLAYER_MOVEMENT_SPEED;
 
-        if (currentTile == Tile_Rope && !tileIsFloor(floorTile)) {
+        if (currentTile == TileType_Rope && !tileIsFloor(floorTile)) {
             player->state = EntityState_FallingByRope;
             player->ropeFallRow = player->tilePosition.y;
             return;

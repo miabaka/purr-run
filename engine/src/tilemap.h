@@ -18,10 +18,10 @@ void Tilemap_destroy(Tilemap *this);
 
 void Tilemap_freeTiles(Tilemap *this);
 
-void Tilemap_assignTiles(Tilemap *this, uint8_t width, uint8_t height, const TileType *tiles);
-
 Tile Tilemap_getTile(const Tilemap *this, IVec2 position);
 
 Tile Tilemap_getTileWithOffset(const Tilemap *this, IVec2 position, int ox, int oy);
 
 void Tilemap_setTile(Tilemap *this, IVec2 position, TileType tileType);
+
+void Tilemap_assignTiles(Tilemap *this, uint8_t width, uint8_t height, const TileType *tiles);

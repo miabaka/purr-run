@@ -59,7 +59,7 @@ void TilemapRenderer_init(TilemapRenderer *this, const char *atlasImagePath, con
     for (uint16_t nTileDef = 0; nTileDef < config->tileDefCount; nTileDef++) {
         const TileDef *tileDef = &config->tileDefs[nTileDef];
 
-        if (tileDef->tile >= sizeof(this->tileFirstFrames) || tileDef->atlasEntry >= config->atlasEntryCount)
+        if (tileDef->tile >= TileType_count || tileDef->atlasEntry >= config->atlasEntryCount)
             continue;
 
         uint16_t firstFrame = entryFirstFrames[tileDef->atlasEntry] + tileDef->firstFrame;
@@ -93,7 +93,6 @@ static inline void drawTile(IVec2 position, Vec4 texCoords) {
 }
 
 // TODO: replace with the blazing fast shader-based renderer
-// TODO: take frame numbers from tile-to-frame lut
 void TilemapRenderer_render(TilemapRenderer *this, const Tilemap *map) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, this->texAtlas);
@@ -106,7 +105,7 @@ void TilemapRenderer_render(TilemapRenderer *this, const Tilemap *map) {
     for (uint16_t nTile = 0; nTile < map->tileCount; nTile++) {
         Tile tile = tiles[nTile];
 
-        if (tile.type == Tile_Air)
+        if (tile.type == TileType_Air)
             continue;
 
         uint16_t frame = this->tileFirstFrames[tile.type];

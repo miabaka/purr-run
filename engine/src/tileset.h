@@ -28,27 +28,27 @@ const MultiframeAtlasEntry TILESET_ATLAS_ENTRIES[] = {
 
 const TileDef TILESET_TILE_DEFS[] = {
         {
-                .tile = Tile_Ground,
+                .tile = TileType_Ground,
                 .atlasEntry = 0,
                 .firstFrame = 0
         },
         {
-                .tile = Tile_Concrete,
+                .tile = TileType_Concrete,
                 .atlasEntry = 0,
                 .firstFrame = 0
         },
         {
-                .tile = Tile_Ice,
+                .tile = TileType_Ice,
                 .atlasEntry = 0,
                 .firstFrame = 0
         },
         {
-                .tile = Tile_Ladder,
+                .tile = TileType_Ladder,
                 .atlasEntry = 1,
                 .firstFrame = 0
         },
         {
-                .tile = Tile_Rope,
+                .tile = TileType_Rope,
                 .atlasEntry = 1,
                 .firstFrame = 1
         }
