@@ -9,11 +9,13 @@
 #include "tilemap.h"
 #include "graphics/tilemap_renderer.h"
 #include "player.h"
+#include "deferred_tile_update_list.h"
 
 typedef struct {
     Player player;
     Tilemap map;
     TilemapRenderer mapRenderer;
+    DeferredTileUpdateList tileUpdateList;
 } Game;
 
 void Game_init(Game *this);

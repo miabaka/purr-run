@@ -5,12 +5,12 @@
 #include <GL/gl.h>
 #include "math/util.h"
 
-static inline bool isTileSolid(TileType tile) {
+static inline bool isSolidTile(TileType tile) {
     return tile == TileType_Ground || tile == TileType_Concrete || tile == TileType_Ice;
 }
 
-static inline bool isTileFloor(TileType tile) {
-    return isTileSolid(tile) || tile == TileType_Ladder;
+static inline bool isFloorTile(TileType tile) {
+    return isSolidTile(tile) || tile == TileType_Ladder;
 }
 
 static void snapAxisToGrid(float *pos, int tilePos, float dt) {
@@ -23,6 +23,11 @@ static inline void snapToHorizontalGrid(Player *player, float dt) {
 
 static inline void snapToVerticalGrid(Player *player, float dt) {
     snapAxisToGrid(&player->position.y, player->tilePosition.y, dt);
+}
+
+static inline void snapToGridImmediate(Player *player) {
+    player->position.x = (float) player->tilePosition.x;
+    player->position.y = (float) player->tilePosition.y;
 }
 
 static void updateTilePosition(Player *player) {
@@ -45,14 +50,18 @@ void Player_destroy(Player *this) {
 
 // TODO: queue for direction keys
 // TODO: replace this ugly ifs with something pretty
-void Player_update(Player *this, float dt, const PlayerInputState *inputState, Tilemap *map) {
+PlayerUpdateResult Player_update(Player *this, float dt, const PlayerInputState *inputState, Tilemap *map) {
+    PlayerUpdateResult result = {
+            .type = PlayerUpdateResultType_None
+    };
+
     TileType currentTile = Tilemap_getTile(map, this->tilePosition).type;
     TileType floorTile = Tilemap_getTileWithOffset(map, this->tilePosition, 0, 1).type;
     TileType upperTile = Tilemap_getTileWithOffset(map, this->tilePosition, 0, -1).type;
 
-    // falling
+    bool onFloor = isFloorTile(floorTile) || currentTile == TileType_Rope || currentTile == TileType_Ladder;
 
-    bool onFloor = isTileFloor(floorTile) || currentTile == TileType_Rope || currentTile == TileType_Ladder;
+    // falling
 
     if (!(onFloor || this->state == PlayerState_FallingByRope))
         this->state = PlayerState_Falling;
@@ -72,7 +81,28 @@ void Player_update(Player *this, float dt, const PlayerInputState *inputState, T
 
         updateTilePosition(this);
 
-        return;
+        return result;
+    }
+
+    // digging
+
+    if (inputState->digLeft || inputState->digRight) {
+        int dx = inputState->digRight ? 1 : -1;
+
+        TileType digUpperTile = Tilemap_getTileWithOffset(map, this->tilePosition, dx, 0).type;
+        TileType digTile = Tilemap_getTileWithOffset(map, this->tilePosition, dx, 1).type;
+
+        if (digTile == TileType_Ground && digUpperTile == TileType_Air) {
+            result.type = PlayerUpdateResultType_Dig;
+
+            result.position.x = dx;
+            result.position.y = 1;
+            IVec2_add(&result.position, &this->tilePosition);
+
+            snapToGridImmediate(this);
+        }
+
+        return result;
     }
 
     // vertical movement
@@ -81,31 +111,31 @@ void Player_update(Player *this, float dt, const PlayerInputState *inputState, T
         if (currentTile == TileType_Ladder || floorTile == TileType_Ladder) {
             this->position.y -= dt * PLAYER_MOVEMENT_SPEED;
 
-            if (!currentTile || isTileSolid(upperTile))
+            if (!currentTile || isSolidTile(upperTile))
                 this->position.y = maxf(this->position.y, (float) this->tilePosition.y);
 
             if (this->position.y != (float) this->tilePosition.y) {
                 snapToHorizontalGrid(this, dt);
                 updateTilePosition(this);
-                return;
+                return result;
             }
         }
     } else if (inputState->down) {
         this->position.y += dt * PLAYER_MOVEMENT_SPEED;
 
-        if (currentTile == TileType_Rope && !isTileFloor(floorTile)) {
+        if (currentTile == TileType_Rope && !isFloorTile(floorTile)) {
             this->state = PlayerState_FallingByRope;
             this->ropeFallRow = this->tilePosition.y;
-            return;
+            return result;
         }
 
-        if (isTileSolid(floorTile))
+        if (isSolidTile(floorTile))
             this->position.y = minf(this->position.y, (float) this->tilePosition.y);
 
         if (this->position.y != (float) this->tilePosition.y) {
             snapToHorizontalGrid(this, dt);
             updateTilePosition(this);
-            return;
+            return result;
         }
     }
 
@@ -124,7 +154,7 @@ void Player_update(Player *this, float dt, const PlayerInputState *inputState, T
 
         TileType tile = Tilemap_getTile(map, newTilePos).type;
 
-        if (isTileSolid(tile)) {
+        if (isSolidTile(tile)) {
             float nx = this->position.x + dx;
 
             if (!inputState->right)
@@ -140,6 +170,8 @@ void Player_update(Player *this, float dt, const PlayerInputState *inputState, T
     }
 
     updateTilePosition(this);
+
+    return result;
 }
 
 void Player_setPosition(Player *this, float x, float y) {

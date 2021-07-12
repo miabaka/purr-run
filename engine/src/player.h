@@ -2,9 +2,10 @@
 
 #include "math/vec2.h"
 #include "math/ivec2.h"
+#include "tilemap.h"
 #include "player_state.h"
 #include "player_input_state.h"
-#include "tilemap.h"
+#include "player_update_result.h"
 
 #define PLAYER_MOVEMENT_SPEED 4.f
 #define PLAYER_FALLING_SPEED 7.f
@@ -21,7 +22,7 @@ void Player_init(Player *this);
 
 void Player_destroy(Player *this);
 
-void Player_update(Player *this, float dt, const PlayerInputState *inputState, Tilemap *map);
+PlayerUpdateResult Player_update(Player *this, float dt, const PlayerInputState *inputState, Tilemap *map);
 
 void Player_setPosition(Player *this, float x, float y);
 

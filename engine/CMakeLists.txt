@@ -15,6 +15,7 @@ add_executable(engine
         src/game.c
         src/main.c
         src/player.c
+        src/deferred_tile_update_list.c
         src/tilemap.c)
 
 target_link_libraries(engine glfw OpenGL::GL OpenGL::GLU)
