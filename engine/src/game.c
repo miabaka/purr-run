@@ -23,15 +23,15 @@ void Game_destroy(Game *this) {
     Tilemap_destroy(&this->map);
 }
 
-void Game_update(Game *this, GLFWwindow *window, float dt) {
-    PlayerInputState playerInputState;
-
-    playerInputState.up = (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
-    playerInputState.down = (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS);
-    playerInputState.left = (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS);
-    playerInputState.right = (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS);
-    playerInputState.digLeft = (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS);
-    playerInputState.digRight = (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS);
+void Game_update(Game *this, Window *window, float dt) {
+    PlayerInputState playerInputState = {
+            .up = Window_isKeyPressed(window, 0x26),
+            .down = Window_isKeyPressed(window, 0x28),
+            .left = Window_isKeyPressed(window, 0x25),
+            .right = Window_isKeyPressed(window, 0x27),
+            .digLeft = Window_isKeyPressed(window, 0x5a),
+            .digRight = Window_isKeyPressed(window, 0x58)
+    };
 
     PlayerUpdateResult result = Player_update(&this->player, dt, &playerInputState, &this->map);
 

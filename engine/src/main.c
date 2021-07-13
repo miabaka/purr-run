@@ -1,45 +1,31 @@
-#define GLFW_INCLUDE_NONE
-
-#include <stddef.h>
-#include <stdbool.h>
-#include <GLFW/glfw3.h>
+#include "system/window.h"
 #include "game.h"
 
+static void update(Window *window, float dt) {
+    Game *game = Window_getUserPointer(window);
+    Game_update(game, window, dt);
+}
+
+static void render(Window *window) {
+    Game *game = Window_getUserPointer(window);
+    Game_render(game);
+}
+
 int main() {
-    glfwInit();
-
-    glfwWindowHint(GLFW_RESIZABLE, false);
-    glfwWindowHint(GLFW_VISIBLE, false);
-
-    GLFWwindow *window = glfwCreateWindow(640, 480, "Engine", NULL, NULL);
-
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    Window window;
+    Window_init(&window, 640, 480, "Engine");
 
     Game game;
     Game_init(&game);
 
-    glfwShowWindow(window);
+    Window_setUserPointer(&window, &game);
+    Window_setUpdateCallback(&window, update);
+    Window_setRenderCallback(&window, render);
 
-    double previousTime = 0.f;
-
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-
-        double time = glfwGetTime();
-        double timeDelta = time - previousTime;
-
-        previousTime = time;
-
-        Game_update(&game, window, (float) timeDelta);
-        Game_render(&game);
-
-        glfwSwapBuffers(window);
-    }
+    Window_run(&window);
 
     Game_destroy(&game);
-
-    glfwTerminate();
+    Window_destroy(&window);
 
     return 0;
 }
