@@ -16,21 +16,20 @@ enum<ubyte> NodeType {
     NodeType_File
 };
 
-// enum<ubyte> NodeType {
-//     NodeType_Folder,
-//     NodeType_File,
-//     NodeType_CompressedFile,
-//     NodeType_CompressedFileGroup
-// };
-
 struct Package {
     char magic[4];
 
-    struct Header {
-        ubyte formatVersion;
-        uint16 nodeCount;
-        uint16 rootNode;
-    } header;
+    ubyte formatVersion : 7;
+    ubyte nodeInfoCompressed : 1;
+
+    if (nodeInfoCompressed)
+        uint16 nodeInfoSize;
+
+    uint16 nodeCount;
+    uint16 rootNode;
+
+    if (nodeInfoCompressed)
+        break;
 
     struct Node {
         NodeType type : 1;
@@ -52,5 +51,5 @@ struct Package {
 
         if (type == NodeType_File)
             uint32 size;
-    } nodes[header.nodeCount] <optimize=false>;
+    } nodes[nodeCount] <optimize=false>;
 } package;
