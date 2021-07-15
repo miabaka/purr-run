@@ -1,0 +1,56 @@
+//------------------------------------------------
+//--- 010 Editor v10.0.2 Binary Template
+//
+//      File: 
+//   Authors:
+//   Version: 
+//   Purpose: 
+//  Category: 
+// File Mask: *.pr
+//  ID Bytes: 50 52 50 4B
+//   History: 
+//------------------------------------------------
+
+enum<ubyte> NodeType {
+    NodeType_Folder,
+    NodeType_File
+};
+
+// enum<ubyte> NodeType {
+//     NodeType_Folder,
+//     NodeType_File,
+//     NodeType_CompressedFile,
+//     NodeType_CompressedFileGroup
+// };
+
+struct Package {
+    char magic[4];
+
+    struct Header {
+        ubyte formatVersion;
+        uint16 nodeCount;
+        uint16 rootNode;
+    } header;
+
+    struct Node {
+        NodeType type : 1;
+        ubyte hasChild : 1;
+        ubyte hasNext : 1;
+        ubyte zlibCompressed : 1;
+        ubyte zlibFlags : 3 <format=binary>;
+
+        ubyte nameLength;
+
+        if (nameLength)
+            char name[nameLength];
+
+        if (hasChild)
+            uint16 child;
+
+        if (hasNext)
+            uint16 next;
+
+        if (type == NodeType_File)
+            uint32 size;
+    } nodes[header.nodeCount] <optimize=false>;
+} package;
