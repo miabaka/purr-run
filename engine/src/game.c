@@ -5,6 +5,7 @@
 #include <GL/glu.h>
 #include "sample_map.h"
 #include "tileset.h"
+#include "graphics/texture_loader.h"
 
 #define TREASURE_ANIMATION_SPEED 15.f
 
@@ -34,7 +35,7 @@ static void fillTreasureList(Game *this) {
             Treasure *treasure = TreasureList_newItem(&this->treasures);
             treasure->position = pos;
             treasure->animationFrame = (float) (rand() % this->treasureFrameCount);
-        };
+        }
     }
 }
 
@@ -50,13 +51,17 @@ static void updateTreasures(Game *this, float dt) {
 }
 
 // TODO: create separate layer for treasures behind main layer
-void Game_init(Game *this) {
+void Game_init(Game *this, VfsPackage *vfsPackage) {
     Tilemap_init(&this->map);
     Tilemap_assignTiles(&this->map, SAMPLE_MAP_WIDTH, SAMPLE_MAP_HEIGHT, SAMPLE_MAP_TILES);
 
     const TilemapRendererConfig *rendererConfig = Tileset_getRendererConfig();
 
-    TilemapRenderer_init(&this->mapRenderer, "data/atlas.png", rendererConfig);
+    TilemapRenderer_init(
+            &this->mapRenderer,
+            GlTextureLoader_loadFromVfs(vfsPackage, "textures/atlas.png"),
+            rendererConfig
+    );
 
     this->treasureFrameCount = TilemapRendererConfig_getTileFrameCount(rendererConfig, TileType_Treasure);
 

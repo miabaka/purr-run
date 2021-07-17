@@ -9,6 +9,7 @@
 #include "deferred_tile_update_list.h"
 #include "treasure_list.h"
 #include "system/window.h"
+#include "vfs/package.h"
 
 typedef struct {
     Player player;
@@ -19,7 +20,7 @@ typedef struct {
     uint16_t treasureFrameCount;
 } Game;
 
-void Game_init(Game *this);
+void Game_init(Game *this, VfsPackage *vfsPackage);
 
 void Game_destroy(Game *this);
 

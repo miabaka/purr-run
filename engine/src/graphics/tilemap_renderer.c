@@ -3,39 +3,8 @@
 #include <GL/glext.h>
 #include "../stb/stb_image.h"
 
-static GLuint loadTexture(const char *path, IVec2 *outSize) {
-    int width, height, nChannels;
-    unsigned char *pixelData = stbi_load(path, &width, &height, &nChannels, STBI_rgb_alpha);
-
-    if (pixelData == NULL) {
-        outSize->x = 0;
-        outSize->y = 0;
-        return 0;
-    }
-
-    GLuint texture;
-    glGenTextures(1, &texture);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixelData);
-
-    stbi_image_free(pixelData);
-
-    outSize->x = width;
-    outSize->y = height;
-
-    return texture;
-}
-
-void TilemapRenderer_init(TilemapRenderer *this, const char *atlasImagePath, const TilemapRendererConfig *config) {
-    IVec2 atlasSize;
-    this->texAtlas = loadTexture(atlasImagePath, &atlasSize);
+void TilemapRenderer_init(TilemapRenderer *this, GlTexture texture, const TilemapRendererConfig *config) {
+    this->texAtlas = texture.handle;
 
     uint16_t totalFrames = 0;
 
@@ -51,7 +20,7 @@ void TilemapRenderer_init(TilemapRenderer *this, const char *atlasImagePath, con
         entryFirstFrames[nEntry] = processedFrameCount;
 
         processedFrameCount += MultiframeAtlasEntry_generateTexCoords(
-                config->atlasEntries[nEntry], texCoords + processedFrameCount, atlasSize);
+                config->atlasEntries[nEntry], texCoords + processedFrameCount, texture.size);
     }
 
     this->texCoords = texCoords;

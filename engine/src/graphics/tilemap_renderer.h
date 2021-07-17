@@ -5,7 +5,9 @@
 #include "multiframe_atlas_entry.h"
 #include "../tilemap.h"
 #include "../math/vec4.h"
+#include "../vfs/package.h"
 #include "tilemap_renderer_config.h"
+#include "gl/texture.h"
 
 typedef struct {
     uint16_t tileFirstFrames[TileType_count];
@@ -13,7 +15,7 @@ typedef struct {
     GLuint texAtlas;
 } TilemapRenderer;
 
-void TilemapRenderer_init(TilemapRenderer *this, const char *atlasImagePath, const TilemapRendererConfig *config);
+void TilemapRenderer_init(TilemapRenderer *this, GlTexture texture, const TilemapRendererConfig *config);
 
 void TilemapRenderer_destroy(TilemapRenderer *this);
 

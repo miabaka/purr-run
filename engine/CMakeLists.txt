@@ -7,6 +7,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 add_executable(engine
         src/graphics/multiframe_atlas_entry.c
+        src/graphics/texture_loader.c
         src/graphics/tilemap_renderer.c
         src/graphics/tilemap_renderer_config.c
         src/math/ivec2.c
