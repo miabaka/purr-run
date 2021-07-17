@@ -14,6 +14,7 @@ add_executable(engine
         src/stb/stb_image.c
         src/system/timer_win32.c
         src/system/window_win32.c
+        src/vfs/package.c
         src/game.c
         src/main.c
         src/player.c
