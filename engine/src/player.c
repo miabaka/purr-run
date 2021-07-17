@@ -14,7 +14,7 @@ static inline bool isFloorTile(TileType tile) {
 }
 
 static inline bool isDigObstacleTile(TileType tile) {
-    return !(tile == TileType_Air || tile == TileType_Treasure);
+    return tile >= TileType_Ground && tile <= TileType_Ladder;
 }
 
 static void snapAxisToGrid(float *pos, int tilePos, float dt) {
