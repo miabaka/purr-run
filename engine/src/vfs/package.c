@@ -197,7 +197,7 @@ void *VfsPackage_readFile(VfsPackage *this, const char *path, uint32_t *outSize)
     }
 
     void *buf = malloc(node->size);
-    fseek(this->fp, (long) node->offset, SEEK_SET);
+    fread(buf, node->size, 1, this->fp);
 
     *outSize = node->size;
 
