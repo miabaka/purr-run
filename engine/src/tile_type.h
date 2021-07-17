@@ -7,5 +7,6 @@ typedef enum {
     TileType_Ice = 3,
     TileType_Ladder = 4,
     TileType_Rope = 5,
+    TileType_Treasure = 6,
     TileType_count
 } __attribute__((packed)) TileType;

@@ -8,6 +8,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 add_executable(engine
         src/graphics/multiframe_atlas_entry.c
         src/graphics/tilemap_renderer.c
+        src/graphics/tilemap_renderer_config.c
         src/math/ivec2.c
         src/math/vec2.c
         src/stb/stb_image.c
@@ -17,6 +18,8 @@ add_executable(engine
         src/main.c
         src/player.c
         src/deferred_tile_update_list.c
-        src/tilemap.c)
+        src/tilemap.c
+        src/tileset.c
+        src/treasure_list.c)
 
 target_link_libraries(engine OpenGL::GL OpenGL::GLU dwmapi winmm)

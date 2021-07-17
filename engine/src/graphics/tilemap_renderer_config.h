@@ -9,3 +9,7 @@ typedef struct {
     uint16_t atlasEntryCount;
     uint16_t tileDefCount;
 } TilemapRendererConfig;
+
+const TileDef *TilemapRendererConfig_getTileDef(const TilemapRendererConfig *this, TileType tileType);
+
+uint16_t TilemapRendererConfig_getTileFrameCount(const TilemapRendererConfig *this, TileType tileType);

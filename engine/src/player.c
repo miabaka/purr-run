@@ -13,6 +13,10 @@ static inline bool isFloorTile(TileType tile) {
     return isSolidTile(tile) || tile == TileType_Ladder;
 }
 
+static inline bool isDigObstacleTile(TileType tile) {
+    return !(tile == TileType_Air || tile == TileType_Treasure);
+}
+
 static void snapAxisToGrid(float *pos, int tilePos, float dt) {
     *pos = lerpf((float) tilePos, *pos, exp2f(-PLAYER_SNAPPING_RATE * dt));
 }
@@ -92,7 +96,7 @@ PlayerUpdateResult Player_update(Player *this, float dt, const PlayerInputState 
         TileType digUpperTile = Tilemap_getTileWithOffset(map, this->tilePosition, dx, 0).type;
         TileType digTile = Tilemap_getTileWithOffset(map, this->tilePosition, dx, 1).type;
 
-        if (digTile == TileType_Ground && digUpperTile == TileType_Air) {
+        if (digTile == TileType_Ground && !isDigObstacleTile(digUpperTile)) {
             result.type = PlayerUpdateResultType_Dig;
 
             result.position.x = dx;

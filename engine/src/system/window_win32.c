@@ -19,7 +19,7 @@ typedef HGLRC WINAPI (*wglCreateContextAttribsARB_fun)(HDC hDC, HGLRC hshareCont
 typedef BOOL WINAPI (*wglSwapIntervalEXT_fun)(int interval);
 
 static LRESULT CALLBACK windowProc(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
-    Window *this = GetProp(window, "prwnd");
+    Window *this = GetProp(window, "pr_wnd");
 
     switch (msg) {
         case WM_KEYDOWN:
@@ -133,7 +133,7 @@ void Window_init(Window *this, int width, int height, const char *title) {
             0
     );
 
-    SetProp(window, "prwnd", this);
+    SetProp(window, "pr_wnd", this);
 
     createContext(window);
 
@@ -146,7 +146,7 @@ void Window_init(Window *this, int width, int height, const char *title) {
 }
 
 void Window_destroy(Window *this) {
-    RemoveProp(this->handle, "prwnd");
+    RemoveProp(this->handle, "pr_wnd");
     DestroyWindow(this->handle);
     UnregisterClass("render", GetModuleHandle(NULL));
 }

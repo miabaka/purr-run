@@ -1,24 +1,78 @@
 #include "game.h"
 
+#include <math.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include "sample_map.h"
 #include "tileset.h"
 
+#define TREASURE_ANIMATION_SPEED 15.f
+
+static void processTileUpdates(Game *this, float dt) {
+    LIST_PFOR(this->tileUpdates, it) {
+        DeferredTileUpdate *update = &LIST_ITERATOR_VALUE(it);
+
+        update->timeLeft -= dt;
+
+        if (update->timeLeft <= 0) {
+            Tilemap_setTile(&this->map, update->position, update->tileType);
+            LIST_PFOR_REMOVE(this->tileUpdates, it)
+        }
+
+        LIST_PFOR_TAIL(it)
+    }
+}
+
+static void fillTreasureList(Game *this) {
+    IVec2 pos;
+
+    for (pos.y = 0; pos.y < this->map.height; pos.y++) {
+        for (pos.x = 0; pos.x < this->map.width; pos.x++) {
+            if (Tilemap_getTile(&this->map, pos).type != TileType_Treasure)
+                continue;
+
+            Treasure *treasure = TreasureList_newItem(&this->treasures);
+            treasure->position = pos;
+            treasure->animationFrame = (float) (rand() % this->treasureFrameCount);
+        };
+    }
+}
+
+static void updateTreasures(Game *this, float dt) {
+    LIST_FOR(this->treasures, it) {
+        Treasure *treasure = &LIST_ITERATOR_VALUE(it);
+
+        Tilemap_setTileVariant(&this->map, treasure->position, (uint8_t) treasure->animationFrame);
+
+        treasure->animationFrame =
+                fmodf(treasure->animationFrame + dt * TREASURE_ANIMATION_SPEED, this->treasureFrameCount);
+    }
+}
+
+// TODO: create separate layer for treasures behind main layer
 void Game_init(Game *this) {
     Tilemap_init(&this->map);
     Tilemap_assignTiles(&this->map, SAMPLE_MAP_WIDTH, SAMPLE_MAP_HEIGHT, SAMPLE_MAP_TILES);
 
-    TilemapRenderer_init(&this->mapRenderer, "data/atlas.png", &TILESET_RENDERER_CONFIG);
+    const TilemapRendererConfig *rendererConfig = Tileset_getRendererConfig();
+
+    TilemapRenderer_init(&this->mapRenderer, "data/atlas.png", rendererConfig);
+
+    this->treasureFrameCount = TilemapRendererConfig_getTileFrameCount(rendererConfig, TileType_Treasure);
 
     Player_init(&this->player);
     Player_setPosition(&this->player, 12.f, 8.f);
 
-    DeferredTileUpdateList_init(&this->tileUpdateList);
+    DeferredTileUpdateList_init(&this->tileUpdates);
+
+    TreasureList_init(&this->treasures);
+
+    fillTreasureList(this);
 }
 
 void Game_destroy(Game *this) {
-    DeferredTileUpdateList_destroy(&this->tileUpdateList);
+    TreasureList_destroy(&this->treasures);
+    DeferredTileUpdateList_destroy(&this->tileUpdates);
     TilemapRenderer_destroy(&this->mapRenderer);
     Tilemap_destroy(&this->map);
 }
@@ -40,24 +94,14 @@ void Game_update(Game *this, Window *window, float dt) {
 
         Tilemap_setTile(&this->map, result.position, TileType_Air);
 
-        DeferredTileUpdate *update = DeferredTileUpdateList_newItem(&this->tileUpdateList);
+        DeferredTileUpdate *update = DeferredTileUpdateList_newItem(&this->tileUpdates);
         update->timeLeft = 5.f;
         update->position = result.position;
         update->tileType = tileType;
     }
 
-    LIST_PFOR(this->tileUpdateList, it) {
-        DeferredTileUpdate *update = &LIST_ITERATOR_VALUE(it);
-
-        update->timeLeft -= dt;
-
-        if (update->timeLeft <= 0) {
-            Tilemap_setTile(&this->map, update->position, update->tileType);
-            LIST_PFOR_REMOVE(this->tileUpdateList, it)
-        }
-
-        LIST_PFOR_TAIL(it)
-    }
+    processTileUpdates(this, dt);
+    updateTreasures(this, dt);
 }
 
 void Game_render(Game *this) {
