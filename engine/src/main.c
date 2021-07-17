@@ -15,7 +15,7 @@ static void render(Window *window) {
 int main() {
     VfsPackage package;
 
-    VfsResult initResult = VfsPackage_init(&package, "data.pr") != VfsResult_Success;
+    VfsResult initResult = VfsPackage_init(&package, "data.pr");
 
     if (initResult != VfsResult_Success) {
         fprintf_s(stderr, "VfsPackage_init failed with code %u\n", initResult);
