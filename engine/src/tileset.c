@@ -60,7 +60,7 @@ static const TileDef TILESET_TILE_DEFS[] = {
         {
                 .tile = TileType_Ladder,
                 .atlasEntry = 3,
-                .firstFrame = 3
+                .firstFrame = 0
         },
         {
                 .tile = TileType_Rope,

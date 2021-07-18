@@ -46,6 +46,15 @@ static inline uint8_t getDockingFrame(const Tilemap *map, IVec2 position) {
     return DOCK_FRAME_MAPPING[sides];
 }
 
+static inline uint8_t getLadderDockingFrame(const Tilemap *map, IVec2 position) {
+    uint8_t sides = 0;
+
+    sides |= (Tilemap_getTileWithOffset(map, position, 0, -1).type == TileType_Ladder);
+    sides |= (Tilemap_getTileWithOffset(map, position, 0, 1).type == TileType_Ladder) << 1;
+
+    return sides;
+}
+
 static inline bool isTilePositionInvalid(const Tilemap *this, IVec2 position) {
     return position.x < 0 || position.y < 0 || position.x >= this->width || position.y >= this->height;
 }
@@ -57,6 +66,9 @@ static void updateSingleTileDocking(Tilemap *this, IVec2 position, IVec2 offset)
         return;
 
     Tile *tile = &this->tiles[position.x + position.y * this->width];
+
+    if (tile->type == TileType_Ladder)
+        return;
 
     if (isTileDockable(tile->type))
         tile->variant = getDockingFrame(this, position);
@@ -144,7 +156,9 @@ void Tilemap_assignTiles(Tilemap *this, uint8_t width, uint8_t height, const Til
         for (pos.x = 0; pos.x < this->width; pos.x++) {
             Tile *tile = &this->tiles[pos.x + pos.y * this->width];
 
-            if (isTileDockable(tile->type))
+            if (tile->type == TileType_Ladder)
+                tile->variant = getLadderDockingFrame(this, pos);
+            else if (isTileDockable(tile->type))
                 tile->variant = getDockingFrame(this, pos);
             else
                 tile->variant = 0;
