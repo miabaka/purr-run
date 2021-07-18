@@ -13,11 +13,11 @@ static const MultiframeAtlasEntry TILESET_ATLAS_ENTRIES[] = {
                 .frameHeight = 32
         },
         {
-                .x = 0,
+                .x = 480,
                 .y = 64,
-                .frameCount = 17,
-                .firstFrame = 15,
-                .framesPerRow = 16,
+                .frameCount = 1,
+                .firstFrame = 0,
+                .framesPerRow = 1,
                 .frameWidth = 32,
                 .frameHeight = 32
         },
@@ -27,6 +27,15 @@ static const MultiframeAtlasEntry TILESET_ATLAS_ENTRIES[] = {
                 .frameCount = 18,
                 .firstFrame = 0,
                 .framesPerRow = 16,
+                .frameWidth = 32,
+                .frameHeight = 32
+        },
+        {
+                .x = 0,
+                .y = 96,
+                .frameCount = 4,
+                .firstFrame = 0,
+                .framesPerRow = 4,
                 .frameWidth = 32,
                 .frameHeight = 32
         }
@@ -50,13 +59,13 @@ static const TileDef TILESET_TILE_DEFS[] = {
         },
         {
                 .tile = TileType_Ladder,
-                .atlasEntry = 1,
-                .firstFrame = 0
+                .atlasEntry = 3,
+                .firstFrame = 3
         },
         {
                 .tile = TileType_Rope,
                 .atlasEntry = 1,
-                .firstFrame = 1
+                .firstFrame = 0
         },
         {
                 .tile = TileType_Treasure,

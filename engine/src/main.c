@@ -1,6 +1,6 @@
 #include "system/window.h"
-#include "game.h"
 #include "vfs/package.h"
+#include "game.h"
 
 static void update(Window *window, float dt) {
     Game *game = Window_getUserPointer(window);

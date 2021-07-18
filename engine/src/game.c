@@ -110,7 +110,7 @@ void Game_update(Game *this, Window *window, float dt) {
 }
 
 void Game_render(Game *this) {
-    glClearColor(0.443f, 0.482f, 0.498f, 1.f);
+    glClearColor(0.592f, 0.522f, 0.6f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glEnable(GL_BLEND);
