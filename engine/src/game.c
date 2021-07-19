@@ -6,6 +6,7 @@
 #include "sample_map.h"
 #include "tileset.h"
 #include "graphics/texture_loader.h"
+#include "math/minmax.h"
 
 #define TREASURE_ANIMATION_SPEED 15.f
 
@@ -116,11 +117,31 @@ void Game_render(Game *this) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glLoadIdentity();
-    gluOrtho2D(0, this->map.width, this->map.height, 0);
-
     TilemapRenderer_render(&this->mapRenderer, &this->map);
     Player_render(&this->player);
 
     glDisable(GL_BLEND);
+}
+
+void Game_resize(Game *this, IVec2 size) {
+    glViewport(0, 0, size.x, size.y);
+
+    glLoadIdentity();
+    gluOrtho2D(0, size.x, size.y, 0);
+
+    int scaleFactor = imax(1, imin(size.x / 640, size.y / 480));
+    float scaledTileSide = (float) (32 * scaleFactor);
+
+    IVec2 levelSize = {
+            .x = 640 * scaleFactor,
+            .y = 480 * scaleFactor,
+    };
+
+    IVec2 centeredPos = {
+            .x = (size.x - levelSize.x) / 2,
+            .y = (size.y - levelSize.y) / 2,
+    };
+
+    glTranslatef((float) centeredPos.x, (float) centeredPos.y, 0);
+    glScalef(scaledTileSide, scaledTileSide, 1);
 }

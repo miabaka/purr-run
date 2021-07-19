@@ -31,12 +31,20 @@ static LRESULT CALLBACK windowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
 
             break;
 
+        case WM_SIZE: {
+            Window_updateSize(this);
+            return 0;
+        }
+
         case WM_CLOSE:
             PostQuitMessage(0);
             return 0;
 
         case WM_ERASEBKGND:
             return 1;
+
+        case WM_PAINT:
+            Window_render(this, false);
 
         case WM_SYSCOMMAND:
             if ((wParam & 0xfff0) == SC_KEYMENU)
@@ -137,10 +145,13 @@ void Window_init(Window *this, int width, int height, const char *title) {
 
     createContext(window);
 
+    this->dc = GetDC(window);
+
     this->handle = window;
     this->userPointer = NULL;
     this->callbacks.update = NULL;
     this->callbacks.render = NULL;
+    this->callbacks.resize = NULL;
 
     memset(this->keys, 0, sizeof(this->keys));
 }
@@ -155,8 +166,6 @@ void Window_run(Window *this) {
     timer_init();
 
     ShowWindow(this->handle, SW_SHOW);
-
-    HDC dc = GetDC(this->handle);
 
     MSG msg;
     double previousTime = 0.f;
@@ -177,11 +186,32 @@ void Window_run(Window *this) {
             if (this->callbacks.update)
                 this->callbacks.update(this, (float) timeDelta);
 
-            if (this->callbacks.render)
-                this->callbacks.render(this);
-
-            DwmFlush();
-            SwapBuffers(dc);
+            Window_render(this, true);
         }
     }
+}
+
+void Window_updateSize(Window *this) {
+    if (!this->callbacks.resize)
+        return;
+
+    RECT clientRect;
+    GetClientRect(this->handle, &clientRect);
+
+    IVec2 size = {
+            .x = clientRect.right - clientRect.left,
+            .y = clientRect.bottom - clientRect.top
+    };
+
+    this->callbacks.resize(this, size);
+}
+
+void Window_render(Window *this, bool flush) {
+    if (this->callbacks.render)
+        this->callbacks.render(this);
+
+    if (flush)
+        DwmFlush();
+
+    SwapBuffers(this->dc);
 }

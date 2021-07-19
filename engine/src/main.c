@@ -12,6 +12,11 @@ static void render(Window *window) {
     Game_render(game);
 }
 
+static void resize(Window *window, IVec2 size) {
+    Game *game = Window_getUserPointer(window);
+    Game_resize(game, size);
+}
+
 int main() {
     VfsPackage package;
 
@@ -31,6 +36,7 @@ int main() {
     Window_setUserPointer(&window, &game);
     Window_setUpdateCallback(&window, update);
     Window_setRenderCallback(&window, render);
+    Window_setResizeCallback(&window, resize);
 
     Window_run(&window);
 

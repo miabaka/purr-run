@@ -27,3 +27,5 @@ void Game_destroy(Game *this);
 void Game_update(Game *this, Window *window, float dt);
 
 void Game_render(Game *this);
+
+void Game_resize(Game *this, IVec2 size);
