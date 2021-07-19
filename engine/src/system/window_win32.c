@@ -33,6 +33,7 @@ static LRESULT CALLBACK windowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
 
         case WM_SIZE: {
             Window_updateSize(this);
+            Window_render(this, false);
             return 0;
         }
 
@@ -42,9 +43,6 @@ static LRESULT CALLBACK windowProc(HWND window, UINT msg, WPARAM wParam, LPARAM 
 
         case WM_ERASEBKGND:
             return 1;
-
-        case WM_PAINT:
-            Window_render(this, false);
 
         case WM_SYSCOMMAND:
             if ((wParam & 0xfff0) == SC_KEYMENU)
