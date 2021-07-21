@@ -164,7 +164,47 @@ VfsNode *VfsPackage_findNode(VfsPackage *this, const char *path) {
     return currentNode;
 }
 
+#ifndef NDEBUG
+
+static void *readFileFromRealFs(const char *path, uint32_t *outSize) {
+    FILE *fp = fopen(path, "rb");
+
+    if (!fp)
+        return NULL;
+
+    fseek(fp, 0, SEEK_END);
+
+    size_t size = ftell(fp);
+
+    if (size > UINT32_MAX) {
+        fclose(fp);
+        return NULL;
+    }
+
+    fseek(fp, 0, SEEK_SET);
+
+    void *buf = malloc(size);
+    fread(buf, size, 1, fp);
+
+    *outSize = (uint32_t) size;
+
+    fclose(fp);
+
+    return buf;
+}
+
+#endif
+
 void *VfsPackage_readFile(VfsPackage *this, const char *path, uint32_t *outSize) {
+#ifndef NDEBUG
+    {
+        void *buf = readFileFromRealFs(path, outSize);
+
+        if (buf)
+            return buf;
+    }
+#endif
+
     VfsNode *node = VfsPackage_findNode(this, path);
 
     if (!(node && node->type == VfsNodeType_File))
